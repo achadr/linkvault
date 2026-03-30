@@ -14,7 +14,7 @@
 - backend/.env + backend/.env.example
 - Verify: `docker compose up` → api accessible sur :3000
 
-### T02 — NestJS init + TypeORM + Dockerfile
+### [X] T02 — NestJS init + TypeORM + Dockerfile
 **Goal**: NestJS connecté à PostgreSQL, Dockerfile multi-stage prêt
 **Deliverables**:
 - NestJS scaffoldé dans /backend

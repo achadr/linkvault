@@ -1,5 +1,12 @@
 # LinkVault — Claude Rules
 
+## Working Directory
+The project root is: C:\Users\achra\Desktop\My-projects\linkvault
+All files must be created directly here, never inside a linkvault/ subfolder.
+- backend/ → C:\Users\achra\Desktop\My-projects\linkvault\backend\
+- frontend/ → C:\Users\achra\Desktop\My-projects\linkvault\frontend\
+- spec/ → C:\Users\achra\Desktop\My-projects\linkvault\spec\
+
 ## Stack
 - Backend: NestJS 10 + TypeORM 0.3 + PostgreSQL 16
 - Frontend: React 18 + TanStack Query v5 + Tailwind CSS v3
