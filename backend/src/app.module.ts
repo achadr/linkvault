@@ -6,6 +6,8 @@ import { AppService } from './app.service';
 import { User } from './modules/users/user.entity';
 import { Link } from './modules/links/link.entity';
 import { Tag } from './modules/tags/tag.entity';
+import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { Tag } from './modules/tags/tag.entity';
           : false,
       }),
     }),
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

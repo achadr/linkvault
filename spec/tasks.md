@@ -37,7 +37,7 @@
 
 ## Phase 2 — Authentification
 
-### T04 — Register + Login (JWT email/password)
+### [X] T04 — Register + Login (JWT email/password)
 **Goal**: Créer un compte et se connecter avec JWT en httpOnly cookie
 **Deliverables**:
 - UsersModule + UsersService (findByEmail, create)
