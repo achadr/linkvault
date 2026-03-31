@@ -21,7 +21,7 @@ export class Link {
   @Column({ type: 'varchar', nullable: true })
   title: string | null;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'text', nullable: true })
   description: string | null;
 
   @Column()

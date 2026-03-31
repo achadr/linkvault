@@ -150,7 +150,7 @@
 **Deliverables**:
 - Dashboard.tsx avec Sidebar + main
 - Sidebar: nav + liste des tags avec compteurs
-- StatCard.tsx: total liens, tags, favoris, archivés
+- StatCard.tsx: total liens, total tags, archivés
 - LinkCard.tsx: titre, description, tags, date, actions
 - useLinks.ts + useTags.ts hooks TanStack Query
 - Verify: dashboard charge les liens du user connecté

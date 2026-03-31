@@ -36,7 +36,7 @@ export class InitSchema1711900000000 implements MigrationInterface {
         "id"          UUID NOT NULL DEFAULT gen_random_uuid(),
         "url"         VARCHAR NOT NULL,
         "title"       VARCHAR,
-        "description" VARCHAR,
+        "description" TEXT,
         "userId"      UUID NOT NULL,
         "createdAt"   TIMESTAMP NOT NULL DEFAULT now(),
         "archivedAt"  TIMESTAMP,
