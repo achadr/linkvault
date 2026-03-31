@@ -23,7 +23,7 @@
 - .dockerignore
 - Verify: `npm run start:dev` connecte à la DB
 
-### T03 — Entities + migrations
+### [X] T03 — Entities + migrations
 **Goal**: Tables User, Link, Tag, link_tags créées via migration
 **Deliverables**:
 - user.entity.ts (id, email, name, password, googleId, createdAt)
