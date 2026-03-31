@@ -48,7 +48,7 @@
 - JwtStrategy + JwtAuthGuard
 - Verify: register puis login retourne 200 avec cookie
 
-### T05 — Refresh token + Logout
+### [X] T05 — Refresh token + Logout
 **Goal**: Rotation du token sans re-login
 **Deliverables**:
 - POST /auth/refresh → lit refresh cookie, retourne nouveau access token

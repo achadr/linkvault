@@ -83,6 +83,17 @@ export class AuthService {
     });
   }
 
+  refresh(user: User, res: Response): AuthResult {
+    this.setTokenCookies(res, user);
+    return this.toAuthResult(user);
+  }
+
+  logout(res: Response): void {
+    const options = { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' as const };
+    res.clearCookie('access_token', options);
+    res.clearCookie('refresh_token', options);
+  }
+
   private toAuthResult(user: User): AuthResult {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, googleId, ...safeUser } = user;
