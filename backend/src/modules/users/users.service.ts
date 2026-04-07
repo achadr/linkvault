@@ -32,4 +32,30 @@ export class UsersService {
     });
     return this.usersRepo.save(user);
   }
+
+  async findOrCreateGoogleUser(data: {
+    email: string;
+    name: string;
+    googleId: string;
+  }): Promise<User> {
+    // Look up by googleId first (returning user)
+    let user = await this.usersRepo.findOne({
+      where: { googleId: data.googleId },
+    });
+    if (user) return user;
+
+    // Email exists as local account → merge by linking googleId
+    user = await this.usersRepo.findOne({ where: { email: data.email } });
+    if (user) {
+      user.googleId = data.googleId;
+      return this.usersRepo.save(user);
+    }
+
+    // New user via Google
+    return this.create({
+      email: data.email,
+      name: data.name,
+      googleId: data.googleId,
+    });
+  }
 }
