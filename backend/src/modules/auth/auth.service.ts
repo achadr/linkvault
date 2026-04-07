@@ -12,6 +12,7 @@ import { LoginDto } from './dto/login.dto';
 import { User } from '../users/user.entity';
 
 export interface AuthResult {
+  accessToken: string;
   user: Omit<User, 'password' | 'googleId'>;
 }
 
@@ -35,8 +36,8 @@ export class AuthService {
       password: hashed,
     });
 
-    this.setTokenCookies(res, user);
-    return this.toAuthResult(user);
+    const accessToken = this.setTokenCookies(res, user);
+    return this.toAuthResult(user, accessToken);
   }
 
   async login(dto: LoginDto, res: Response): Promise<AuthResult> {
@@ -50,11 +51,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    this.setTokenCookies(res, user);
-    return this.toAuthResult(user);
+    const accessToken = this.setTokenCookies(res, user);
+    return this.toAuthResult(user, accessToken);
   }
 
-  private setTokenCookies(res: Response, user: User): void {
+  private setTokenCookies(res: Response, user: User): string {
     const payload = { sub: user.id, email: user.email };
     const isProduction = process.env.NODE_ENV === 'production';
 
@@ -68,11 +69,33 @@ export class AuthService {
       expiresIn: '7d',
     });
 
-    res.cookie('access_token', accessToken, {
+    res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: isProduction,
       sameSite: 'lax',
-      maxAge: 15 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return accessToken;
+  }
+
+  refresh(user: User, res: Response): AuthResult {
+    const accessToken = this.setTokenCookies(res, user);
+    return this.toAuthResult(user, accessToken);
+  }
+
+  loginWithGoogle(user: User, res: Response): string {
+    const payload = { sub: user.id, email: user.email };
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    const accessToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: '15m',
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_REFRESH_SECRET,
+      expiresIn: '7d',
     });
 
     res.cookie('refresh_token', refreshToken, {
@@ -81,22 +104,18 @@ export class AuthService {
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-  }
 
-  refresh(user: User, res: Response): AuthResult {
-    this.setTokenCookies(res, user);
-    return this.toAuthResult(user);
+    return accessToken;
   }
 
   logout(res: Response): void {
     const options = { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' as const };
-    res.clearCookie('access_token', options);
     res.clearCookie('refresh_token', options);
   }
 
-  private toAuthResult(user: User): AuthResult {
+  private toAuthResult(user: User, accessToken: string): AuthResult {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, googleId, ...safeUser } = user;
-    return { user: safeUser };
+    return { accessToken, user: safeUser };
   }
 }
