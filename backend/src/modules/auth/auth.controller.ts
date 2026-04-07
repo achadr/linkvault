@@ -22,6 +22,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @HttpCode(200)
   login(
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
@@ -30,6 +31,7 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @HttpCode(200)
   @UseGuards(JwtRefreshGuard)
   refresh(
     @CurrentUser() user: User,
