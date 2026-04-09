@@ -9,6 +9,7 @@ import { Tag } from './modules/tags/tag.entity';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { TagsModule } from './modules/tags/tags.module';
+import { LinksModule } from './modules/links/links.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { TagsModule } from './modules/tags/tags.module';
     UsersModule,
     AuthModule,
     TagsModule,
+    LinksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

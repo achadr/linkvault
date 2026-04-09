@@ -85,7 +85,7 @@
 - CreateTagDto + slug auto-généré
 - Verify: tags d'un user non visibles par un autre
 
-### T09 — LinksModule CRUD (user-scoped)
+### [X] T09 — LinksModule CRUD (user-scoped)
 **Goal**: CRUD liens isolé par utilisateur
 **Deliverables**:
 - LinksService: create, findAll (paginé), update, archive, remove
@@ -115,7 +115,7 @@
 - Tous filtrés par userId
 - Verify: search et filter retournent uniquement les liens du user connecté
 
-### T12 — Tests backend (unit + e2e)
+### [X] T12 — Tests backend (unit + e2e)
 **Goal**: Couvrir les endpoints métier
 **Deliverables**:
 - links.service.spec.ts + tags.service.spec.ts
