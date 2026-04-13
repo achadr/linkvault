@@ -28,6 +28,7 @@ describe('Links (e2e)', () => {
   let tokenA: string;
   let tokenB: string;
   let linkId: string;
+  let tagId: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -203,6 +204,74 @@ describe('Links (e2e)', () => {
       .set('Authorization', `Bearer ${tokenA}`)
       .send({ title: 'x' })
       .expect(404);
+  });
+
+  // ─── Tag assignment ──────────────────────────────────────────────────────
+
+  it('POST /tags → 201 creates a tag for user A', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/tags')
+      .set('Authorization', `Bearer ${tokenA}`)
+      .send({ name: 'NestJS' })
+      .expect(201);
+
+    expect(res.body.slug).toBe('nestjs');
+    tagId = res.body.id;
+  });
+
+  it('POST /links/:id/tags/:tagId → 200 assigns tag to link', async () => {
+    const res = await request(app.getHttpServer())
+      .post(`/links/${linkId}/tags/${tagId}`)
+      .set('Authorization', `Bearer ${tokenA}`)
+      .expect(200);
+
+    expect(res.body.tags).toHaveLength(1);
+    expect(res.body.tags[0].id).toBe(tagId);
+  });
+
+  it('POST /links/:id/tags/:tagId → idempotent (assign same tag twice)', async () => {
+    const res = await request(app.getHttpServer())
+      .post(`/links/${linkId}/tags/${tagId}`)
+      .set('Authorization', `Bearer ${tokenA}`)
+      .expect(200);
+
+    expect(res.body.tags).toHaveLength(1);
+  });
+
+  it('GET /links?tag=nestjs → returns only tagged links', async () => {
+    const res = await request(app.getHttpServer())
+      .get('/links?tag=nestjs')
+      .set('Authorization', `Bearer ${tokenA}`)
+      .expect(200);
+
+    expect(res.body.data.length).toBeGreaterThan(0);
+    const link = res.body.data.find((l: { id: string }) => l.id === linkId);
+    expect(link).toBeDefined();
+  });
+
+  it('GET /links?tag=nonexistent → returns empty list', async () => {
+    const res = await request(app.getHttpServer())
+      .get('/links?tag=nonexistent-slug')
+      .set('Authorization', `Bearer ${tokenA}`)
+      .expect(200);
+
+    expect(res.body.total).toBe(0);
+  });
+
+  it('POST /links/:id/tags/:tagId → 403 when user B tries to assign tag on user A link', () => {
+    return request(app.getHttpServer())
+      .post(`/links/${linkId}/tags/${tagId}`)
+      .set('Authorization', `Bearer ${tokenB}`)
+      .expect(403);
+  });
+
+  it('DELETE /links/:id/tags/:tagId → 200 removes tag from link', async () => {
+    const res = await request(app.getHttpServer())
+      .delete(`/links/${linkId}/tags/${tagId}`)
+      .set('Authorization', `Bearer ${tokenA}`)
+      .expect(200);
+
+    expect(res.body.tags).toHaveLength(0);
   });
 
   // ─── Archive ─────────────────────────────────────────────────────────────

@@ -65,6 +65,7 @@ export class LinksController {
   }
 
   @Post(':id/tags/:tagId')
+  @HttpCode(HttpStatus.OK)
   addTag(
     @Param('id') id: string,
     @Param('tagId') tagId: string,
