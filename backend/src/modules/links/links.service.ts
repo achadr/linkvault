@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Link } from './link.entity';
+import { Tag } from '../tags/tag.entity';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { ScraperService } from './scraper.service';
@@ -30,6 +31,8 @@ export class LinksService {
   constructor(
     @InjectRepository(Link)
     private readonly linkRepo: Repository<Link>,
+    @InjectRepository(Tag)
+    private readonly tagRepo: Repository<Tag>,
     private readonly scraper: ScraperService,
   ) {}
 
@@ -120,5 +123,24 @@ export class LinksService {
   async remove(id: string, userId: string): Promise<void> {
     const link = await this.findOne(id, userId);
     await this.linkRepo.remove(link);
+  }
+
+  async addTag(linkId: string, tagId: string, userId: string): Promise<Link> {
+    const link = await this.findOne(linkId, userId);
+    const tag = await this.tagRepo.findOne({ where: { id: tagId } });
+    if (!tag) throw new NotFoundException('Tag not found');
+    if (tag.userId !== userId) throw new ForbiddenException();
+    const alreadyAssigned = link.tags.some((t) => t.id === tagId);
+    if (!alreadyAssigned) {
+      link.tags.push(tag);
+      await this.linkRepo.save(link);
+    }
+    return link;
+  }
+
+  async removeTag(linkId: string, tagId: string, userId: string): Promise<Link> {
+    const link = await this.findOne(linkId, userId);
+    link.tags = link.tags.filter((t) => t.id !== tagId);
+    return this.linkRepo.save(link);
   }
 }

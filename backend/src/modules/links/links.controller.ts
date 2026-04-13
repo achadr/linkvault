@@ -63,4 +63,22 @@ export class LinksController {
   remove(@Param('id') id: string, @CurrentUser() user: User) {
     return this.linksService.remove(id, user.id);
   }
+
+  @Post(':id/tags/:tagId')
+  addTag(
+    @Param('id') id: string,
+    @Param('tagId') tagId: string,
+    @CurrentUser() user: User,
+  ) {
+    return this.linksService.addTag(id, tagId, user.id);
+  }
+
+  @Delete(':id/tags/:tagId')
+  removeTag(
+    @Param('id') id: string,
+    @Param('tagId') tagId: string,
+    @CurrentUser() user: User,
+  ) {
+    return this.linksService.removeTag(id, tagId, user.id);
+  }
 }

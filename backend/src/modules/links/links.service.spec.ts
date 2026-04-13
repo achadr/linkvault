@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { LinksService } from './links.service';
 import { ScraperService } from './scraper.service';
 import { Link } from './link.entity';
+import { Tag } from '../tags/tag.entity';
 
 const makeLink = (overrides: Partial<Link> = {}): Link =>
   ({
@@ -45,6 +46,7 @@ describe('LinksService', () => {
     remove: jest.Mock;
     createQueryBuilder: jest.Mock;
   };
+  let tagRepo: { findOne: jest.Mock };
   let scraper: { scrape: jest.Mock };
 
   beforeEach(async () => {
@@ -55,12 +57,14 @@ describe('LinksService', () => {
       remove: jest.fn(),
       createQueryBuilder: jest.fn(),
     };
+    tagRepo = { findOne: jest.fn() };
     scraper = { scrape: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LinksService,
         { provide: getRepositoryToken(Link), useValue: linkRepo },
+        { provide: getRepositoryToken(Tag), useValue: tagRepo },
         { provide: ScraperService, useValue: scraper },
       ],
     }).compile();
